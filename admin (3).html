@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Agadir Drivers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Outfit:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --iv:#F5F0E8;--pale:#E4DCD0;--ch:#1C1C1A;--esp:#2A1F14;--st:#8C8278;--wh:#FDFCFA;
+  --gr:#2D6A4F;--grbg:#EBF5F0;--grbdr:#52B788;
+  --rd:#8B2E1A;--rdbg:#F5EAE7;--rdbdr:#C1674F;
+  --sel:#1B4332;--selbg:#D8F3DC;--sand:#C8A96E;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--iv);color:var(--ch);line-height:1.6;overflow-x:hidden}
+
+/* ── LOGIN ── */
+.login-screen{position:fixed;inset:0;background:var(--esp);display:flex;align-items:center;justify-content:center;z-index:999;padding:2rem}
+.login-box{width:100%;max-width:360px;text-align:center;transition:transform .15s}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:3rem}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;color:var(--iv);margin-bottom:.3rem}
+.login-sub{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.25);margin-bottom:2.5rem}
+.login-input{width:100%;padding:.85rem 1rem;background:rgba(245,240,232,.06);border:1px solid rgba(245,240,232,.1);font-family:'Outfit',sans-serif;font-size:1.1rem;color:var(--iv);outline:none;text-align:center;letter-spacing:.25em;margin-bottom:.9rem;transition:border-color .2s}
+.login-input:focus{border-color:rgba(245,240,232,.28)}
+.login-input::placeholder{letter-spacing:.08em;font-size:.9rem;color:rgba(245,240,232,.18)}
+.login-btn{width:100%;padding:.88rem;background:rgba(245,240,232,.07);border:1px solid rgba(245,240,232,.16);font-family:'Courier Prime',monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,240,232,.65);cursor:pointer;transition:all .2s}
+.login-btn:hover{background:rgba(245,240,232,.13);color:var(--iv)}
+.login-err{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.08em;color:#C1674F;min-height:1.1rem;margin-top:.5rem}
+.login-att{font-family:'Courier Prime',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(245,240,232,.18);margin-top:.35rem}
+
+/* ── DASHBOARD ── */
+.dashboard{display:none}
+.dashboard.active{display:block}
+
+/* TOP BAR */
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:300;height:58px;background:var(--ch);display:flex;justify-content:space-between;align-items:center;padding:0 2rem;border-bottom:1px solid rgba(245,240,232,.05)}
+.top-logo{font-family:'Cormorant Garamond',serif;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.5)}
+.top-logo span{color:var(--sand)}
+.top-right{display:flex;align-items:center;gap:1.2rem}
+.top-badge{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(200,169,110,.1);color:var(--sand);padding:.2rem .65rem}
+.top-logout{background:none;border:1px solid rgba(245,240,232,.1);font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.3);padding:.32rem .75rem;cursor:pointer;transition:all .2s}
+.top-logout:hover{border-color:rgba(245,240,232,.28);color:rgba(245,240,232,.65)}
+
+/* LAYOUT */
+.dash-wrap{display:flex;min-height:100vh;padding-top:58px}
+.sidebar{width:210px;flex-shrink:0;background:var(--esp);position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;border-right:1px solid rgba(245,240,232,.04)}
+.sb-sec{padding:.5rem 1.3rem .2rem;font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.18);margin-top:.8rem}
+.sb-btn{width:100%;background:none;border:none;border-left:2px solid transparent;text-align:left;padding:.68rem 1.4rem;font-family:'Outfit',sans-serif;font-size:.84rem;color:rgba(245,240,232,.4);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.65rem;white-space:nowrap}
+.sb-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;opacity:.5;transition:opacity .2s}
+.sb-btn:hover{background:rgba(245,240,232,.04);color:rgba(245,240,232,.75)}
+.sb-btn:hover svg{opacity:.8}
+.sb-btn.active{background:rgba(245,240,232,.05);color:rgba(245,240,232,.88);border-left-color:var(--sand)}
+.sb-btn.active svg{opacity:1}
+.main-area{margin-left:210px;flex:1;padding:2.5rem;background:var(--iv);min-height:calc(100vh - 58px);overflow-x:hidden}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block;animation:panelIn .35s ease both}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panel-hd{margin-bottom:2rem}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--ch);margin-bottom:.25rem}
+.panel-sub{font-size:.84rem;color:var(--st);line-height:1.5}
+button{transition:transform .12s ease,background .2s,color .2s,border-color .2s,opacity .2s}
+button:active{transform:scale(.96)}
+.bk-card,.stat-card,.d-table tr{transition:box-shadow .2s,background .15s}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2.5rem}
+.stat-card{background:var(--wh);border:1px solid var(--pale);padding:1.3rem 1.5rem}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ch);display:block;line-height:1}
+.stat-l{font-family:'Courier Prime',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--st);margin-top:.3rem;display:block}
+
+/* SECTION HEAD */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.8rem}
+.sec-h{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--ch)}
+.btn-add{background:var(--ch);color:var(--iv);border:none;font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:.52rem 1.1rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.45rem}
+.btn-add:hover{background:var(--esp)}
+.btn-add svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* DRIVERS TABLE */
+.d-table{width:100%;border-collapse:collapse;background:var(--wh);border:1px solid var(--pale)}
+.d-table th{background:var(--ch);color:rgba(245,240,232,.5);font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;padding:.75rem 1rem;text-align:left;font-weight:400}
+.d-table td{padding:.85rem 1rem;border-bottom:1px solid var(--pale);font-size:.84rem;color:var(--ch);vertical-align:middle}
+.d-table tr:last-child td{border-bottom:none}
+.d-table tr:hover td{background:rgba(245,240,232,.5)}
+.d-photo{width:34px;height:34px;border-radius:50%;object-fit:cover}
+.badge{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;padding:.16rem .5rem}
+.badge.on{background:var(--grbg);color:var(--gr);border:1px solid var(--grbdr)}
+.badge.off{background:var(--rdbg);color:var(--rd);border:1px solid var(--rdbdr)}
+.row-acts{display:flex;gap:.35rem;flex-wrap:wrap}
+.row-btn{background:none;border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.52rem;letter-spacing:.07em;text-transform:uppercase;color:var(--st);padding:.24rem .6rem;cursor:pointer;transition:all .16s;white-space:nowrap}
+.row-btn:hover{background:var(--ch);color:var(--iv);border-color:var(--ch)}
+.row-btn.del:hover{background:var(--rd);border-color:var(--rd);color:var(--wh)}
+
+/* SCHEDULE */
+.sch-top{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.sch-sel{padding:.48rem .75rem;border:1px solid var(--pale);background:var(--wh);font-family:'Outfit',sans-serif;font-size:.84rem;color:var(--ch);outline:none;cursor:pointer;min-width:180px;-webkit-appearance:none}
+.sch-nav{display:flex;gap:0}
+.sch-nbtn{background:var(--wh);border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.08em;color:var(--st);padding:.36rem .75rem;cursor:pointer;transition:all .16s}
+.sch-nbtn:not(:last-child){border-right:none}
+.sch-nbtn:hover,.sch-nbtn.cur{background:var(--ch);color:var(--iv);border-color:var(--ch)}
+.sch-save{background:var(--ch);color:var(--iv);border:none;font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;padding:.48rem 1.2rem;cursor:pointer;transition:all .2s;margin-left:auto}
+.sch-save:hover{background:var(--esp)}
+
+.paint-bar{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.paint-lbl{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--st)}
+.pb{display:inline-flex;align-items:center;gap:.38rem;padding:.38rem .9rem;border:1px solid;font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .16s}
+.pb-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.pb.free{color:var(--gr);border-color:var(--grbdr);background:var(--grbg)}
+.pb.free.on{background:var(--gr);color:var(--wh);border-color:var(--gr)}
+.pb.book{color:var(--rd);border-color:var(--rdbdr);background:var(--rdbg)}
+.pb.book.on{background:var(--rd);color:var(--wh);border-color:var(--rd)}
+.pb.clr{color:var(--st);border-color:var(--pale);background:var(--wh)}
+.pb.clr.on{background:var(--st);color:var(--wh);border-color:var(--st)}
+
+/* SCHEDULE GRID */
+.sch-wrap{overflow-x:auto;border:1px solid var(--pale);background:var(--wh);margin-bottom:.7rem}
+.sch-empty{padding:3rem 2rem;text-align:center;font-family:'Courier Prime',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--st)}
+.sch-grid{display:grid;min-width:1080px}
+.sch-hr-row{display:grid;grid-template-columns:72px repeat(24,1fr);background:var(--ch)}
+.sch-hr-c{padding:.55rem 0;text-align:center;font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.04em;color:rgba(245,240,232,.38);border-right:1px solid rgba(245,240,232,.04)}
+.sch-hr-c:last-child{border-right:none}
+.sch-day-row{display:grid;grid-template-columns:72px repeat(24,1fr);border-bottom:1px solid #EDE8E2}
+.sch-day-row:last-child{border-bottom:none}
+.sch-dlbl{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem .2rem;border-right:1px solid #EDE8E2;background:#FDFCFA;user-select:none;min-width:72px}
+.sch-dlbl.today .sdl-d,.sch-dlbl.today .sdl-n{color:var(--ch);font-weight:700}
+.sdl-d{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:#C0B8AE;line-height:1}
+.sdl-n{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;color:#C0B8AE;line-height:1;margin-top:2px}
+.sch-cell{min-height:40px;border-right:1px solid #EDE8E2;cursor:pointer;transition:background .08s;user-select:none}
+.sch-cell:last-child{border-right:none}
+.sch-cell.empty{background:#FAFAF8}
+.sch-cell.free{background:var(--grbg)}
+.sch-cell.booked{background:var(--rdbg)}
+.sch-cell.empty:hover{background:#EEE9E2}
+.sch-cell.free:hover{background:#C5EDD8}
+.sch-cell.booked:hover{background:#F0C8BE}
+.sch-hint{font-family:'Courier Prime',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--st)}
+
+/* BOOKINGS */
+.book-filters{display:flex;gap:.4rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.filt-btn{background:var(--wh);border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--st);padding:.3rem .75rem;cursor:pointer;transition:all .16s}
+.filt-btn:hover,.filt-btn.on{background:var(--ch);color:var(--iv);border-color:var(--ch)}
+.bk-card{background:var(--wh);border:1px solid var(--pale);padding:1.1rem 1.3rem;margin-bottom:.7rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start}
+.bk-card:hover{box-shadow:0 4px 18px rgba(28,28,26,.06)}
+.bk-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ch);margin-bottom:.18rem}
+.bk-meta{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.07em;color:var(--st);margin-bottom:.55rem}
+.bk-slots{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.6rem}
+.bk-slot{font-family:'Courier Prime',monospace;font-size:.56rem;background:var(--grbg);border:1px solid var(--grbdr);color:var(--gr);padding:.13rem .42rem}
+.bk-dest{font-size:.8rem;color:rgba(28,28,26,.5);margin-bottom:.35rem}
+.bk-right{display:flex;flex-direction:column;align-items:flex-end;gap:.45rem}
+.bk-status{font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .55rem}
+.bk-status.pending{background:rgba(200,169,110,.1);color:var(--sand);border:1px solid rgba(200,169,110,.25)}
+.bk-status.confirmed{background:var(--grbg);color:var(--gr);border:1px solid var(--grbdr)}
+.bk-status.cancelled{background:var(--rdbg);color:var(--rd);border:1px solid var(--rdbdr)}
+.bk-acts{display:flex;gap:.28rem;flex-wrap:wrap}
+.bk-btn{background:none;border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.07em;text-transform:uppercase;color:var(--st);padding:.22rem .52rem;cursor:pointer;transition:all .16s;white-space:nowrap}
+.bk-btn:hover{background:var(--ch);color:var(--iv);border-color:var(--ch)}
+.bk-btn.wa{border-color:var(--grbdr);color:var(--gr)}
+.bk-btn.wa:hover{background:var(--gr);border-color:var(--gr);color:var(--wh)}
+.empty-state{text-align:center;padding:4rem 2rem;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;font-style:italic;color:var(--st)}
+
+/* CALENDAR VIEW */
+.cal-top{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;justify-content:space-between}
+.cal-nav{display:flex;align-items:center;gap:.7rem}
+.cal-nbtn{background:var(--wh);border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.1em;color:var(--st);padding:.36rem .8rem;cursor:pointer;transition:all .16s}
+.cal-nbtn:hover{background:var(--ch);color:var(--iv);border-color:var(--ch)}
+.cal-month-lbl{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;font-style:italic;color:var(--ch);min-width:200px;text-align:center}
+.cal-drv-sel{padding:.48rem .75rem;border:1px solid var(--pale);background:var(--wh);font-family:'Outfit',sans-serif;font-size:.84rem;color:var(--ch);outline:none;cursor:pointer;-webkit-appearance:none}
+
+.cal-grid-wrap{border:1px solid var(--pale);background:var(--wh);overflow:hidden;margin-bottom:1rem}
+.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);background:var(--ch)}
+.cal-dow{padding:.55rem 0;text-align:center;font-family:'Courier Prime',monospace;font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.4)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day{min-height:80px;border-right:1px solid var(--pale);border-bottom:1px solid var(--pale);padding:.45rem .55rem;cursor:pointer;transition:background .15s}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day.empty{background:#FAFAF8;cursor:default}
+.cal-day:not(.empty):hover{background:rgba(140,130,120,.05)}
+.cal-day.today .cday-n{background:var(--ch);color:var(--iv);width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+.cday-n{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:300;color:var(--ch);line-height:1;margin-bottom:.3rem;display:block}
+.cday-bk{font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.04em;padding:.1rem .32rem;margin-bottom:.16rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cday-bk.pending{background:rgba(200,169,110,.1);color:var(--sand)}
+.cday-bk.confirmed{background:var(--grbg);color:var(--gr)}
+.cday-bk.cancelled{background:var(--rdbg);color:var(--rd)}
+.cday-more{font-family:'Courier Prime',monospace;font-size:.48rem;color:var(--st);letter-spacing:.06em}
+.cal-legend{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.cal-leg{display:flex;align-items:center;gap:.4rem;font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--st)}
+.cal-leg-dot{width:10px;height:10px;flex-shrink:0;border:1px solid}
+.cal-detail{background:var(--wh);border:1px solid var(--pale);padding:1.2rem 1.4rem;margin-top:1.5rem;display:none}
+.cal-detail.open{display:block}
+.cal-detail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--pale)}
+.cal-detail-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--ch)}
+.cal-close{background:none;border:none;font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--st);cursor:pointer;transition:color .2s}
+.cal-close:hover{color:var(--ch)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(26,20,14,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{background:var(--wh);border:1px solid var(--pale);width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-head{background:var(--ch);padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;font-style:italic;color:var(--iv)}
+.modal-close{background:none;border:none;color:rgba(245,240,232,.35);font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.1em;cursor:pointer;transition:color .2s}
+.modal-close:hover{color:var(--iv)}
+.modal-body{padding:1.4rem}
+.mf{margin-bottom:.9rem}
+.mf label{display:block;font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--st);margin-bottom:.28rem}
+.mf input,.mf select,.mf textarea{width:100%;padding:.55rem .72rem;border:1px solid var(--pale);background:var(--iv);font-family:'Outfit',sans-serif;font-size:.84rem;color:var(--ch);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--ch)}
+.mf textarea{height:78px;resize:vertical}
+.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.modal-foot{padding:.9rem 1.4rem;border-top:1px solid var(--pale);display:flex;justify-content:flex-end;gap:.55rem;background:var(--wh);position:sticky;bottom:0}
+.btn-save{background:var(--ch);color:var(--iv);border:none;font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:.6rem 1.3rem;cursor:pointer;transition:all .2s}
+.btn-save:hover{background:var(--esp)}
+.btn-cancel{background:none;border:1px solid var(--pale);font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--st);padding:.6rem 1.1rem;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:var(--ch);color:var(--ch)}
+
+/* PHOTOS PANEL */
+.photo-tip{background:rgba(200,169,110,.08);border:1px solid rgba(200,169,110,.25);padding:1rem 1.2rem;font-size:.84rem;color:var(--ch);line-height:1.6;margin-bottom:2rem}
+.photo-tip a{color:var(--sand);font-weight:500}
+.photo-section{margin-bottom:2rem}
+.photo-section-h{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--ch);margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:1px solid var(--pale)}
+.photo-section-h span{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--st);font-weight:400}
+.photo-row{display:flex;gap:1rem;align-items:center;margin-bottom:.8rem}
+.btn-remove-photo{background:none;border:1px solid var(--pale);color:var(--st);width:32px;height:32px;flex-shrink:0;cursor:pointer;font-size:.8rem;transition:all .15s}
+.btn-remove-photo:hover{border-color:var(--rd);color:var(--rd)}
+.btn-add-photo{background:none;border:1px dashed var(--pale);color:var(--st);width:100%;padding:.6rem;cursor:pointer;font-size:.78rem;margin-top:.3rem;transition:all .15s}
+.btn-add-photo:hover{border-color:var(--ch);color:var(--ch)}
+.photo-input{flex:1;padding:.6rem .8rem;border:1px solid var(--pale);background:var(--wh);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ch);outline:none;transition:border-color .2s}
+.photo-input:focus{border-color:var(--ch)}
+.photo-preview{width:64px;height:48px;flex-shrink:0;border:1px solid var(--pale);background-size:cover;background-position:center;background-color:var(--iv);background-repeat:no-repeat}
+.photo-label-input{width:170px;flex-shrink:0;padding:.6rem .7rem;border:1px solid var(--pale);background:var(--wh);font-family:'Outfit',sans-serif;font-size:.78rem;color:var(--ch);outline:none}
+.photo-label-input:focus{border-color:var(--ch)}
+.photo-actions{display:flex;gap:.8rem;padding-top:1rem;border-top:1px solid var(--pale);position:sticky;bottom:0;background:var(--iv);padding-bottom:.5rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(70px);background:var(--ch);color:var(--iv);padding:.85rem 1.8rem;font-family:'Courier Prime',monospace;font-size:.68rem;letter-spacing:.06em;z-index:700;transition:transform .3s,opacity .3s;opacity:0;border-left:2px solid var(--sand);max-width:380px;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main-area{margin-left:0;padding:1.5rem}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .mf-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="storage-warn" id="storage-warn" style="display:none;background:#8B2E1A;color:#FDFCFA;text-align:center;font-family:'Courier Prime',monospace;font-size:.7rem;letter-spacing:.05em;padding:.6rem 1rem;position:fixed;top:0;left:0;right:0;z-index:1000">Your browser is blocking local storage (private/incognito mode) — schedule changes will not save. Use normal browsing mode.</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box" id="login-box">
+    <div class="login-logo">Agadir Drivers</div>
+    <div class="login-title">Admin access</div>
+    <div class="login-sub">Enter your password</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Password" autocomplete="current-password">
+    <button class="login-btn" onclick="tryLogin()">Enter dashboard →</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-att" id="login-att"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="top-bar">
+    <div class="top-logo">Agadir <span>Drivers</span> · Admin</div>
+    <div class="top-right">
+      <div class="top-badge">Admin</div>
+      <button class="top-logout" onclick="logout()">Log out</button>
+    </div>
+  </div>
+  <div class="dash-wrap">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">Overview</div>
+      <button class="sb-btn active" id="sb-overview" onclick="goPanel('overview')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+      </button>
+      <div class="sb-sec">Manage</div>
+      <button class="sb-btn" id="sb-drivers" onclick="goPanel('drivers')">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-linecap="round"/></svg>Drivers
+      </button>
+      <button class="sb-btn" id="sb-schedule" onclick="goPanel('schedule')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule
+      </button>
+      <button class="sb-btn" id="sb-bookings" onclick="goPanel('bookings')">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-linecap="round"/></svg>Bookings
+      </button>
+      <button class="sb-btn" id="sb-calendar" onclick="goPanel('calendar')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-linecap="round" stroke-width="2"/></svg>Calendar
+      </button>
+      <div class="sb-sec">Site</div>
+      <button class="sb-btn" id="sb-photos" onclick="goPanel('photos')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>Photos
+      </button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-area">
+
+      <!-- OVERVIEW -->
+      <div class="panel active" id="panel-overview">
+        <div class="panel-hd">
+          <div class="panel-title">Dashboard</div>
+          <div class="panel-sub">Welcome back. Here is what is happening.</div>
+        </div>
+        <div class="stat-row" id="ov-stats"></div>
+        <div class="sec-head"><div class="sec-h">Recent bookings</div></div>
+        <div id="ov-bookings"></div>
+      </div>
+
+      <!-- DRIVERS -->
+      <div class="panel" id="panel-drivers">
+        <div class="sec-head">
+          <div class="panel-hd">
+            <div class="panel-title">Drivers</div>
+            <div class="panel-sub">Add, edit, or deactivate profiles.</div>
+          </div>
+          <button class="btn-add" onclick="openAdd()">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>Add driver
+          </button>
+        </div>
+        <table class="d-table">
+          <thead><tr><th>Photo</th><th>Name</th><th>Zones</th><th>Vehicle</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="d-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="panel" id="panel-schedule">
+        <div class="panel-hd">
+          <div class="panel-title">Schedule</div>
+          <div class="panel-sub">Click or drag cells to mark hours free or booked.</div>
+        </div>
+        <div class="sch-top">
+          <select class="sch-sel" id="sch-sel" onchange="renderSch()">
+            <option value="">Select a driver…</option>
+          </select>
+          <div class="sch-nav">
+            <button class="sch-nbtn" onclick="schW(-1)">← Prev</button>
+            <button class="sch-nbtn cur" id="sch-now-btn" onclick="schW(0)">This week</button>
+            <button class="sch-nbtn" onclick="schW(1)">Next →</button>
+          </div>
+          <button class="sch-save" onclick="showToast('Schedule saved. Clients see updated availability.')">Save ✓</button>
+        </div>
+        <div class="paint-bar">
+          <span class="paint-lbl">Paint mode:</span>
+          <button class="pb free on" id="pb-free" onclick="setPaint('free')"><div class="pb-dot"></div>Free</button>
+          <button class="pb book" id="pb-book" onclick="setPaint('booked')"><div class="pb-dot"></div>Booked</button>
+          <button class="pb clr" id="pb-clr" onclick="setPaint('empty')"><div class="pb-dot"></div>Clear</button>
+        </div>
+        <div class="sch-wrap" id="sch-wrap">
+          <div class="sch-empty">Select a driver above to manage their schedule</div>
+        </div>
+        <div class="sch-hint">GMT+1 Morocco · Click or drag to paint · Saves automatically</div>
+      </div>
+
+      <!-- BOOKINGS -->
+      <div class="panel" id="panel-bookings">
+        <div class="panel-hd">
+          <div class="panel-title">Bookings</div>
+          <div class="panel-sub">All client reservations. Contact and update status here.</div>
+        </div>
+        <div class="book-filters">
+          <button class="filt-btn on" onclick="filterBk('all',this)">All</button>
+          <button class="filt-btn" onclick="filterBk('pending',this)">Pending</button>
+          <button class="filt-btn" onclick="filterBk('confirmed',this)">Confirmed</button>
+          <button class="filt-btn" onclick="filterBk('cancelled',this)">Cancelled</button>
+        </div>
+        <div id="bk-list"></div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="panel" id="panel-calendar">
+        <div class="panel-hd">
+          <div class="panel-title">Booking Calendar</div>
+          <div class="panel-sub">Monthly overview. Click any day to see bookings.</div>
+        </div>
+        <div class="cal-top">
+          <div class="cal-nav">
+            <button class="cal-nbtn" onclick="calNav(-1)">← Prev</button>
+            <div class="cal-month-lbl" id="cal-month-lbl"></div>
+            <button class="cal-nbtn" onclick="calNav(1)">Next →</button>
+          </div>
+          <select class="cal-drv-sel" id="cal-drv-sel" onchange="renderCal()">
+            <option value="">All drivers</option>
+          </select>
+        </div>
+        <div class="cal-legend">
+          <div class="cal-leg"><div class="cal-leg-dot" style="background:rgba(200,169,110,.1);border-color:rgba(200,169,110,.3)"></div>Pending</div>
+          <div class="cal-leg"><div class="cal-leg-dot" style="background:var(--grbg);border-color:var(--grbdr)"></div>Confirmed</div>
+          <div class="cal-leg"><div class="cal-leg-dot" style="background:var(--rdbg);border-color:var(--rdbdr)"></div>Cancelled</div>
+        </div>
+        <div class="cal-grid-wrap">
+          <div class="cal-dow-row">
+            <div class="cal-dow">Mon</div><div class="cal-dow">Tue</div><div class="cal-dow">Wed</div>
+            <div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div><div class="cal-dow">Sun</div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div class="cal-detail" id="cal-detail">
+          <div class="cal-detail-head">
+            <div class="cal-detail-title" id="cal-detail-title"></div>
+            <button class="cal-close" onclick="document.getElementById('cal-detail').classList.remove('open')">Close ✕</button>
+          </div>
+          <div id="cal-detail-body"></div>
+        </div>
+      </div>
+
+      <!-- PHOTOS -->
+      <div class="panel" id="panel-photos">
+        <div class="panel-hd">
+          <div class="panel-title">Site Photos</div>
+          <div class="panel-sub">The site already uses your real photos. To swap any photo for a different one, paste an image link (URL) below — leave blank to keep your current photo. Changes save instantly and appear on the public site.</div>
+        </div>
+
+        <div class="photo-tip">
+          <strong>Your photos are already set.</strong> You only need this page if you want to change a photo to one hosted online. To get a link: upload to <a href="https://imgbb.com" target="_blank" rel="noopener">imgbb.com</a> (free), copy the "Direct link" (ends in .jpg or .png), and paste it below.
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-h">Main hero photo <span>— big photo on the homepage</span></div>
+          <div class="photo-row">
+            <input type="url" class="photo-input" id="ph-hero" placeholder="https://…  (leave blank for default)">
+            <div class="photo-preview" id="ph-hero-prev"></div>
+          </div>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-h">Discover page hero <span>— big photo on the Discover Agadir page</span></div>
+          <div class="photo-row">
+            <input type="url" class="photo-input" id="ph-dischero" placeholder="https://…  (leave blank for default)">
+            <div class="photo-preview" id="ph-dischero-prev"></div>
+          </div>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-h">Agadir gallery <span>— add as many as you like</span></div>
+          <div id="ph-agadir-rows"></div>
+          <button type="button" class="btn-add-photo" onclick="addGalleryRow('agadir')">+ Add photo</button>
+        </div>
+
+        <div class="photo-section">
+          <div class="photo-section-h">Taghazout gallery <span>— add as many as you like</span></div>
+          <div id="ph-taghazout-rows"></div>
+          <button type="button" class="btn-add-photo" onclick="addGalleryRow('taghazout')">+ Add photo</button>
+        </div>
+
+        <div class="photo-actions">
+          <button class="btn-save" onclick="savePhotos()">Save all photos ✓</button>
+          <button class="btn-cancel" onclick="resetPhotos()">Reset to defaults</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DRIVER MODAL -->
+<div class="modal-bg" id="drv-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Add driver</div>
+      <button class="modal-close" onclick="closeModal()">Close ✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m-id">
+      <div class="mf-row">
+        <div class="mf"><label>Full name *</label><input type="text" id="m-name" placeholder="Driver name"></div>
+        <div class="mf"><label>Phone / WhatsApp *</label><input type="tel" id="m-phone" placeholder="+212 6XX XXX XXX"></div>
+      </div>
+      <div class="mf"><label>Email</label><input type="email" id="m-email" placeholder="driver@example.com"></div>
+      <div class="mf"><label>Profile photo URL</label><input type="url" id="m-photo" placeholder="https://…"></div>
+      <div class="mf"><label>Cover photo URL</label><input type="url" id="m-cover" placeholder="https://…"></div>
+      <div class="mf"><label>Title / Role</label><input type="text" id="m-title" placeholder="Private Driver · Agadir"></div>
+      <div class="mf-row">
+        <div class="mf"><label>Zones (comma separated)</label><input type="text" id="m-zones" placeholder="Agadir, Taghazout"></div>
+        <div class="mf"><label>Tags (comma separated)</label><input type="text" id="m-tags" placeholder="Airport runs, Beach trips"></div>
+      </div>
+      <div class="mf-row">
+        <div class="mf"><label>Vehicle model</label><input type="text" id="m-carmodel" placeholder="Toyota Fortuner"></div>
+        <div class="mf"><label>Seats</label><input type="text" id="m-carseats" placeholder="7 passengers"></div>
+      </div>
+      <div class="mf"><label>Languages (comma separated)</label><input type="text" id="m-langs" placeholder="Arabic, French, English"></div>
+      <div class="mf-row">
+        <div class="mf"><label>Experience</label><input type="text" id="m-exp" placeholder="8+"></div>
+        <div class="mf"><label>Rating</label><input type="text" id="m-rating" placeholder="4.9 ★"></div>
+      </div>
+      <div class="mf"><label>Trips completed</label><input type="text" id="m-trips" placeholder="500+"></div>
+      <div class="mf"><label>About (bio)</label><textarea id="m-about" placeholder="Short bio…"></textarea></div>
+      <div class="mf"><label>Status</label>
+        <select id="m-active">
+          <option value="true">Active — visible to clients</option>
+          <option value="false">Inactive — hidden</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveDriver()">Save driver →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════
+// CONNECTION WARNING (shown if the Google Sheet backend is unreachable)
+// ══════════════════════════
+function showConnWarn(msg){
+  const w=document.getElementById('storage-warn');
+  if(w){w.textContent=msg||'Could not reach the live data. Check your internet connection and reload.';w.style.display='block'}
+}
+function hideConnWarn(){const w=document.getElementById('storage-warn');if(w)w.style.display='none'}
+
+// ══════════════════════════
+// AUTH
+// ══════════════════════════
+const PW='mimilolo2026!';
+const API_URL='https://script.google.com/macros/s/AKfycbxBy-KDCSIj9mRRKydw3cnDCkQ_RKyCqY6PX-8XmlN0OJPOe6deamkfBAnAHmvVYA_C/exec';
+const BUSINESS_WHATSAPP='212601940786';
+
+// ══════════════════════════
+// BACKEND CONNECTION
+// ══════════════════════════
+async function apiGet(action){
+  const res=await fetch(`${API_URL}?action=${encodeURIComponent(action||'getAll')}`);
+  const data=await res.json();
+  if(!data.ok)throw new Error(data.error||'Request failed');
+  return data;
+}
+async function apiPost(payload){
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({password:PW},payload))});
+  const data=await res.json();
+  if(!data.ok)throw new Error(data.error||'Request failed');
+  return data;
+}
+let attempts=0,lockUntil=0;
+
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
+
+function tryLogin(){
+  if(Date.now()<lockUntil){
+    document.getElementById('login-err').textContent=`Locked. Wait ${Math.ceil((lockUntil-Date.now())/1000)}s.`;
+    return;
+  }
+  const val=document.getElementById('pw-input').value;
+  if(val===PW){
+    attempts=0;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').classList.add('active');
+    init();
+  } else {
+    attempts++;
+    document.getElementById('pw-input').value='';
+    if(attempts>=5){
+      lockUntil=Date.now()+30000;
+      document.getElementById('login-err').textContent='Too many attempts. Locked 30s.';
+      document.getElementById('login-att').textContent='';
+    } else {
+      document.getElementById('login-err').textContent='Incorrect password.';
+      document.getElementById('login-att').textContent=`${5-attempts} attempt${5-attempts===1?'':'s'} left`;
+    }
+    const b=document.getElementById('login-box');
+    b.style.transform='translateX(8px)';setTimeout(()=>b.style.transform='translateX(-6px)',100);setTimeout(()=>b.style.transform='',200);
+  }
+}
+function logout(){
+  document.getElementById('dashboard').classList.remove('active');
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('pw-input').value='';
+  document.getElementById('login-err').textContent='';
+}
+setInterval(()=>{if(Date.now()>=lockUntil&&lockUntil>0){lockUntil=0;attempts=0;document.getElementById('login-err').textContent='';document.getElementById('login-att').textContent=''}},1000);
+
+// ══════════════════════════
+// DATA — all backed by the Google Sheet via API_URL
+// ══════════════════════════
+const HOURS=['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+const DAYS_S=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYS_L=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEFAULT_DRIVERS=[{id:'hassan',name:'Hassan',title:'Private Driver · Agadir & Taghazout',about:'Born and raised in Agadir, over 8 years experience.',photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces,center&q=80',cover:'img3.jpg',phone:'+212 6XX XX XX XX',email:'hassan@agadirdriver.ma',experience:'8+',rating:'4.9 ★',trips:'500+',zones:['Agadir','Taghazout'],tags:['Airport runs','Beach trips','Surf transfers','City tours','7 seats'],languages:['Arabic','Tamazight','French','English'],carModel:'Toyota Fortuner',carSeats:'7 passengers',active:true}];
+const DEFAULT_SEED_SCHEDULE=[[0,1,'free'],[0,2,'free'],[0,3,'booked'],[0,4,'booked'],[1,1,'free'],[1,2,'free'],[1,3,'free'],[1,5,'booked'],[2,2,'booked'],[2,4,'free'],[2,5,'free'],[3,1,'free'],[3,2,'free'],[3,3,'free'],[4,3,'booked'],[4,5,'free'],[4,6,'free'],[5,2,'free'],[5,3,'free'],[5,4,'free'],[6,1,'free'],[6,2,'booked']];
+
+let DRIVERS=[];
+let BOOKINGS_CACHE=[];
+let SCHEDULES_CACHE={};
+let SITE_IMAGES=null;
+
+async function saveDriversRemote(){
+  await apiPost({action:'saveDrivers',drivers:DRIVERS});
+}
+async function loadBookings(){
+  const data=await apiGet('getBookings');
+  const raw=data.bookings||[];
+  // Normalize field names to handle sheet column variations (statuts→status, passgenrs→passengers, luaguge→luggage)
+  BOOKINGS_CACHE=raw.map(b=>{
+    const n=Object.assign({},b);
+    // Normalize typos
+    if(n.statuts!==undefined && n.status===undefined) n.status=n.statuts;
+    if(n.passgenrs!==undefined && n.passengers===undefined) n.passengers=n.passgenrs;
+    if(n.luaguge!==undefined && n.luggage===undefined) n.luggage=n.luaguge;
+    // Ensure slots is an array
+    if(typeof n.slots==='string'){ try{n.slots=JSON.parse(n.slots)}catch(e){n.slots=[]} }
+    if(!Array.isArray(n.slots)) n.slots=[];
+    // Default status to pending if empty
+    if(!n.status||n.status==='') n.status='pending';
+    return n;
+  });
+  console.log('[Agadir Drivers] Loaded',BOOKINGS_CACHE.length,'bookings:',BOOKINGS_CACHE);
+  return BOOKINGS_CACHE;
+}
+async function updBkRemote(id,status){
+  await apiPost({action:'updateBooking',id,status});
+}
+
+// Schedule — read from the in-memory cache (populated by loadAllData), write through to the sheet
+function skey(id,wk){return`sch_${id}_w${wk}`}
+function getSch(id,wk){return SCHEDULES_CACHE[skey(id,wk)]||{}}
+function getSlot(id,wk,d,h){const s=getSch(id,wk);return(s[d]&&s[d][h])||'empty'}
+function setSlotLocal(id,wk,d,h,v){
+  if(!SCHEDULES_CACHE[skey(id,wk)])SCHEDULES_CACHE[skey(id,wk)]={};
+  const s=SCHEDULES_CACHE[skey(id,wk)];
+  if(!s[d])s[d]={};
+  s[d][h]=v;
+}
+function countSlots(id,wk,st){let n=0;for(let d=0;d<7;d++)for(let h=0;h<HOURS.length;h++)if(getSlot(id,wk,d,h)===st)n++;return n}
+
+// One-time load of everything the dashboard needs
+async function loadAllData(){
+  const data=await apiGet('getAll');
+  DRIVERS=(data.drivers&&data.drivers.length)?data.drivers:[];
+  SCHEDULES_CACHE=data.schedules||{};
+  SITE_IMAGES=data.images||JSON.parse(JSON.stringify(DEFAULT_IMAGES));
+  hideConnWarn();
+
+  // First-time setup: sheet is empty, seed Hassan so the dashboard isn't blank
+  if(DRIVERS.length===0){
+    DRIVERS=JSON.parse(JSON.stringify(DEFAULT_DRIVERS));
+    await saveDriversRemote();
+    for(const [d,h,v] of DEFAULT_SEED_SCHEDULE){
+      setSlotLocal('hassan',0,d,h,v);
+      await apiPost({action:'saveSchedule',driverId:'hassan',week:0,day:d,hour:h,status:v});
+    }
+    showToast('Welcome — Hassan has been added to get you started.');
+  }
+}
+
+// ══════════════════════════
+// STATE
+// ══════════════════════════
+let schWeekOff=0,paintMode='free',isDrag=false;
+let calYear=new Date().getFullYear(),calMonIdx=new Date().getMonth();
+let curFilter='all';
+
+// ══════════════════════════
+// INIT & NAVIGATION
+// ══════════════════════════
+async function init(){
+  showToast('Loading dashboard…');
+  try{
+    await loadAllData();
+    await loadBookings();
+  }catch(e){
+    showConnWarn('Could not reach the live data. Check your internet connection and reload the page.');
+    console.error(e);
+  }
+  renderOverview();renderDriversTable();populateSchSel();populateCalSel();renderBkList('all');
+}
+
+async function goPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('sb-'+name).classList.add('active');
+  if(name==='overview'){try{await loadBookings()}catch(e){showConnWarn()}renderOverview()}
+  if(name==='drivers')renderDriversTable();
+  if(name==='schedule'){populateSchSel();renderSch()}
+  if(name==='bookings'){try{await loadBookings()}catch(e){showConnWarn()}renderBkList(curFilter)}
+  if(name==='calendar'){populateCalSel();try{await loadBookings()}catch(e){showConnWarn()}renderCal()}
+  if(name==='photos')renderPhotosPanel();
+}
+
+// ══════════════════════════
+// OVERVIEW
+// ══════════════════════════
+function renderOverview(){
+  const bks=BOOKINGS_CACHE;
+  const active=DRIVERS.filter(d=>d.active!==false).length;
+  const pending=bks.filter(b=>!b.status||b.status==='pending').length;
+  const confirmed=bks.filter(b=>b.status==='confirmed').length;
+  document.getElementById('ov-stats').innerHTML=`
+    <div class="stat-card"><span class="stat-n">${DRIVERS.length}</span><span class="stat-l">Total drivers</span></div>
+    <div class="stat-card"><span class="stat-n">${active}</span><span class="stat-l">Active</span></div>
+    <div class="stat-card"><span class="stat-n">${pending}</span><span class="stat-l">Pending bookings</span></div>
+    <div class="stat-card"><span class="stat-n">${confirmed}</span><span class="stat-l">Confirmed</span></div>`;
+  const recent=bks.slice(-5).reverse();
+  document.getElementById('ov-bookings').innerHTML=recent.length?recent.map(bkCardHtml).join(''):'<div class="empty-state">No bookings yet</div>';
+}
+
+// ══════════════════════════
+// DRIVERS
+// ══════════════════════════
+function renderDriversTable(){
+  document.getElementById('d-tbody').innerHTML=DRIVERS.map(d=>`
+    <tr>
+      <td><img class="d-photo" src="${d.photo||''}" alt="" onerror="this.style.display='none'"></td>
+      <td><strong>${d.name}</strong></td>
+      <td>${(d.zones||[]).join(', ')}</td>
+      <td>${d.carModel||'—'}</td>
+      <td><span class="badge ${d.active!==false?'on':'off'}">${d.active!==false?'Active':'Inactive'}</span></td>
+      <td><div class="row-acts">
+        <button class="row-btn" onclick="openEdit('${d.id}')">Edit</button>
+        <button class="row-btn" onclick="toggleStatus('${d.id}')">${d.active!==false?'Deactivate':'Activate'}</button>
+        <button class="row-btn del" onclick="delDriver('${d.id}')">Delete</button>
+      </div></td>
+    </tr>`).join('');
+}
+async function toggleStatus(id){
+  const prev=DRIVERS;
+  DRIVERS=DRIVERS.map(d=>d.id===id?Object.assign({},d,{active:d.active===false}):d);
+  try{await saveDriversRemote();renderDriversTable();renderOverview();showToast('Status updated.')}
+  catch(e){DRIVERS=prev;showToast('⚠ Could not update — check your connection.')}
+}
+async function delDriver(id){
+  if(!confirm('Delete this driver?'))return;
+  const prev=DRIVERS;
+  DRIVERS=DRIVERS.filter(d=>d.id!==id);
+  try{await saveDriversRemote();renderDriversTable();renderOverview();showToast('Driver deleted.')}
+  catch(e){DRIVERS=prev;showToast('⚠ Could not delete — check your connection.')}
+}
+
+// ══════════════════════════
+// DRIVER MODAL
+// ══════════════════════════
+function openAdd(){
+  document.getElementById('modal-title').textContent='Add driver';
+  ['m-id','m-name','m-phone','m-email','m-photo','m-cover','m-title','m-zones','m-tags','m-carmodel','m-carseats','m-langs','m-exp','m-rating','m-trips','m-about'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('m-active').value='true';
+  document.getElementById('drv-modal').classList.add('open');
+}
+function openEdit(id){
+  const d=DRIVERS.find(x=>x.id===id);if(!d)return;
+  document.getElementById('modal-title').textContent='Edit driver';
+  document.getElementById('m-id').value=d.id;
+  document.getElementById('m-name').value=d.name||'';
+  document.getElementById('m-phone').value=d.phone||'';
+  document.getElementById('m-email').value=d.email||'';
+  document.getElementById('m-photo').value=d.photo||'';
+  document.getElementById('m-cover').value=d.cover||'';
+  document.getElementById('m-title').value=d.title||'';
+  document.getElementById('m-zones').value=(d.zones||[]).join(', ');
+  document.getElementById('m-tags').value=(d.tags||[]).join(', ');
+  document.getElementById('m-carmodel').value=d.carModel||'';
+  document.getElementById('m-carseats').value=d.carSeats||'';
+  document.getElementById('m-langs').value=(d.languages||[]).join(', ');
+  document.getElementById('m-exp').value=d.experience||'';
+  document.getElementById('m-rating').value=d.rating||'';
+  document.getElementById('m-trips').value=d.trips||'';
+  document.getElementById('m-about').value=d.about||'';
+  document.getElementById('m-active').value=d.active===false?'false':'true';
+  document.getElementById('drv-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('drv-modal').classList.remove('open')}
+async function saveDriver(){
+  const id=document.getElementById('m-id').value;
+  const name=document.getElementById('m-name').value.trim();
+  if(!name){showToast('Name is required.');return}
+  const sp=v=>v.split(',').map(s=>s.trim()).filter(Boolean);
+  const data={
+    id:id||'drv_'+Date.now(),name,
+    phone:document.getElementById('m-phone').value.trim(),
+    email:document.getElementById('m-email').value.trim(),
+    photo:document.getElementById('m-photo').value.trim(),
+    cover:document.getElementById('m-cover').value.trim(),
+    title:document.getElementById('m-title').value.trim(),
+    zones:sp(document.getElementById('m-zones').value),
+    tags:sp(document.getElementById('m-tags').value),
+    carModel:document.getElementById('m-carmodel').value.trim(),
+    carSeats:document.getElementById('m-carseats').value.trim(),
+    languages:sp(document.getElementById('m-langs').value),
+    experience:document.getElementById('m-exp').value.trim(),
+    rating:document.getElementById('m-rating').value.trim(),
+    trips:document.getElementById('m-trips').value.trim(),
+    about:document.getElementById('m-about').value.trim(),
+    active:document.getElementById('m-active').value==='true',
+  };
+  const prev=DRIVERS;
+  if(id)DRIVERS=DRIVERS.map(d=>d.id===id?data:d);else DRIVERS=DRIVERS.concat([data]);
+  try{
+    await saveDriversRemote();
+    closeModal();renderDriversTable();renderOverview();populateSchSel();populateCalSel();
+    showToast(id?'Driver updated.':'Driver added.');
+  }catch(e){
+    DRIVERS=prev;
+    showToast('⚠ Could not save — check your connection and try again.');
+  }
+}
+
+// ══════════════════════════
+// SCHEDULE
+// ══════════════════════════
+function populateSchSel(){
+  const sel=document.getElementById('sch-sel');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Select a driver…</option>'+DRIVERS.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+function schW(dir){schWeekOff=dir===0?0:schWeekOff+dir;renderSch()}
+function setPaint(mode){
+  paintMode=mode;
+  ['free','book','clr'].forEach(m=>document.getElementById('pb-'+m).classList.remove('on'));
+  const map={free:'pb-free',booked:'pb-book',empty:'pb-clr'};
+  if(map[mode])document.getElementById(map[mode]).classList.add('on');
+}
+function renderSch(){
+  const id=document.getElementById('sch-sel').value;
+  const wrap=document.getElementById('sch-wrap');
+  if(!id){wrap.innerHTML='<div class="sch-empty">Select a driver above to manage their schedule</div>';return}
+  const dates=getWeekDates(schWeekOff);
+  let html=`<div class="sch-grid">`;
+  // Hour header
+  html+=`<div class="sch-hr-row"><div class="sch-hr-c"></div>`;
+  HOURS.forEach(h=>{html+=`<div class="sch-hr-c">${h}</div>`});
+  html+=`</div>`;
+  // Day rows
+  for(let di=0;di<7;di++){
+    const isT=isToday(dates[di]);
+    html+=`<div class="sch-day-row"><div class="sch-dlbl${isT?' today':''}"><span class="sdl-d">${DAYS_S[di]}</span><span class="sdl-n">${dates[di].getDate()}</span></div>`;
+    for(let hi=0;hi<HOURS.length;hi++){
+      const st=getSlot(id,schWeekOff,di,hi);
+      html+=`<div class="sch-cell ${st}" data-d="${di}" data-h="${hi}" onmousedown="schDown(event,'${id}',${di},${hi})" onmouseover="schOver('${id}',${di},${hi})" onmouseup="isDrag=false"></div>`;
+    }
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+  wrap.innerHTML=html;
+}
+function schDown(e,id,d,h){e.preventDefault();isDrag=true;paintCell(id,d,h)}
+function schOver(id,d,h){if(isDrag)paintCell(id,d,h)}
+document.addEventListener('mouseup',()=>{isDrag=false});
+function paintCell(id,d,h){
+  setSlotLocal(id,schWeekOff,d,h,paintMode);
+  const cell=document.querySelector(`.sch-cell[data-d="${d}"][data-h="${h}"]`);
+  if(cell)cell.className=`sch-cell ${paintMode}`;
+  apiPost({action:'saveSchedule',driverId:id,week:schWeekOff,day:d,hour:h,status:paintMode})
+    .catch(()=>showToast('⚠ Could not save that change — check your connection.'));
+}
+
+// ══════════════════════════
+// BOOKINGS
+// ══════════════════════════
+function filterBk(filter,btn){
+  curFilter=filter;
+  document.querySelectorAll('.filt-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderBkList(filter);
+}
+function renderBkList(filter){
+  let bks=BOOKINGS_CACHE;
+  console.log('[Agadir Drivers] renderBkList called. Filter:',filter,'Total in cache:',bks.length);
+  if(filter!=='all')bks=bks.filter(b=>(b.status||'pending')===filter);
+  console.log('[Agadir Drivers] After filter:',bks.length,'bookings');
+  bks=bks.slice().reverse();
+  const list=document.getElementById('bk-list');
+  if(!list){console.error('[Agadir Drivers] #bk-list element NOT FOUND');return;}
+  list.innerHTML=bks.length?bks.map(bkCardHtml).join(''):'<div class="empty-state">No bookings found</div>';
+}
+function bkCardHtml(b){
+  const st=b.status||'pending';
+  const slots=(b.slots||[]).map(s=>`<span class="bk-slot">${s.day||''} ${s.hour||''}</span>`).join('');
+  return`<div class="bk-card">
+    <div>
+      <div class="bk-name">${b.clientName||'—'}</div>
+      <div class="bk-meta">${b.date?new Date(b.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):''} · Driver: ${b.driverName||'—'}</div>
+      <div class="bk-slots">${slots}</div>
+      <div class="bk-dest">→ ${b.destination||'—'}${b.pickup?` · Pickup: ${b.pickup}`:''}</div>
+      ${(b.passengers||b.luggage)?`<div style="font-size:.78rem;color:var(--st);margin-top:.2rem">${b.passengers?`${b.passengers} passenger(s)`:''}${b.passengers&&b.luggage?' · ':''}${b.luggage?`Luggage: ${b.luggage}`:''}</div>`:''}
+      ${b.notes?`<div style="font-size:.78rem;color:var(--st);margin-top:.2rem;font-style:italic">${b.notes}</div>`:''}
+    </div>
+    <div class="bk-right">
+      <span class="bk-status ${st}">${st}</span>
+      <div class="bk-acts">
+        <button class="bk-btn wa" onclick="waClient('${(b.clientPhone||'').replace(/\s+/g,'')}','${b.clientName||''}')">WhatsApp</button>
+        ${st==='pending'?`<button class="bk-btn" onclick="updBk(${b.id},'confirmed')">Confirm</button>`:''}
+        ${st!=='cancelled'?`<button class="bk-btn" onclick="updBk(${b.id},'cancelled')">Cancel</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+function waClient(phone,name){
+  if(!phone){showToast('No phone for this client.');return}
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(`Hi ${name}, this is Agadir Drivers. Confirming your booking.`)}`,'_blank');
+}
+function labelToDayIndex(label){
+  const i=DAYS_L.indexOf(label);
+  if(i>=0)return i;
+  // fall back to short form, e.g. "Mon" if ever stored that way
+  return DAYS_S.indexOf(label);
+}
+function labelToHourIndex(label){
+  return HOURS.indexOf(label);
+}
+
+async function updBk(id,status){
+  const booking=BOOKINGS_CACHE.find(b=>String(b.id)===String(id));
+  try{
+    await updBkRemote(id,status);
+    BOOKINGS_CACHE=BOOKINGS_CACHE.map(b=>String(b.id)===String(id)?Object.assign({},b,{status}):b);
+
+    // Cancelling frees up the slot(s) this booking was holding, so they
+    // become bookable again — without this the slot stays 'booked' forever.
+    if(status==='cancelled'&&booking){
+      const slots=booking.slots||[];
+      for(const s of slots){
+        const di=labelToDayIndex(s.day);
+        const hi=labelToHourIndex(s.hour);
+        const wk=(s.week!=null)?Number(s.week):0;
+        if(di<0||hi<0)continue; // unrecognized label — skip rather than guess
+        setSlotLocal(booking.driver,wk,di,hi,'free');
+        try{
+          await apiPost({action:'saveSchedule',driverId:booking.driver,week:wk,day:di,hour:hi,status:'free'});
+        }catch(e){
+          showToast('⚠ Booking cancelled, but a slot could not be freed — please check the schedule manually.');
+        }
+      }
+    }
+
+    renderBkList(curFilter);renderOverview();
+    if(document.getElementById('panel-schedule')&&document.getElementById('panel-schedule').classList.contains('active'))renderSch();
+    showToast(status==='cancelled'?'Booking cancelled and the time slot(s) freed up.':`Booking marked as ${status}.`);
+  }catch(e){
+    showToast('⚠ Could not update — check your connection.');
+  }
+}
+
+// ══════════════════════════
+// CALENDAR VIEW
+// ══════════════════════════
+function populateCalSel(){
+  const sel=document.getElementById('cal-drv-sel');if(!sel)return;
+  sel.innerHTML='<option value="">All drivers</option>'+DRIVERS.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+}
+function calNav(dir){
+  calMonIdx+=dir;
+  if(calMonIdx>11){calMonIdx=0;calYear++}
+  if(calMonIdx<0){calMonIdx=11;calYear--}
+  renderCal();
+}
+function renderCal(){
+  const lbl=document.getElementById('cal-month-lbl');
+  const grid=document.getElementById('cal-grid');
+  if(!lbl||!grid)return;
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  lbl.textContent=`${MN[calMonIdx]} ${calYear}`;
+  const drvFilter=document.getElementById('cal-drv-sel').value;
+  const bks=BOOKINGS_CACHE.filter(b=>!drvFilter||b.driver===drvFilter);
+  // build date->bookings map
+  const bmap={};
+  bks.forEach(b=>{
+    const d=b.date?b.date.slice(0,10):null;
+    if(d){if(!bmap[d])bmap[d]=[];if(!bmap[d].find(x=>x.id===b.id))bmap[d].push(b)}
+  });
+  const first=new Date(calYear,calMonIdx,1);
+  const last=new Date(calYear,calMonIdx+1,0);
+  const today=new Date();
+  let dow=first.getDay()-1;if(dow<0)dow=6;
+  let html='';
+  for(let i=0;i<dow;i++)html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=last.getDate();d++){
+    const ds=`${calYear}-${String(calMonIdx+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isT=d===today.getDate()&&calMonIdx===today.getMonth()&&calYear===today.getFullYear();
+    const dayBks=bmap[ds]||[];
+    html+=`<div class="cal-day${isT?' today':''}" onclick="showCalDay('${ds}',${d})">`;
+    html+=`<span class="cday-n">${d}</span>`;
+    dayBks.slice(0,3).forEach(b=>{html+=`<div class="cday-bk ${b.status||'pending'}">${b.clientName||'—'}</div>`});
+    if(dayBks.length>3)html+=`<div class="cday-more">+${dayBks.length-3} more</div>`;
+    html+=`</div>`;
+  }
+  const total=dow+last.getDate();const rem=total%7;
+  if(rem!==0)for(let i=0;i<7-rem;i++)html+=`<div class="cal-day empty"></div>`;
+  grid.innerHTML=html;
+}
+function showCalDay(ds,dayNum){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-detail-title').textContent=`${MN[calMonIdx]} ${dayNum}, ${calYear}`;
+  const drvFilter=document.getElementById('cal-drv-sel').value;
+  const dayBks=BOOKINGS_CACHE.filter(b=>{const d=b.date?b.date.slice(0,10):null;return d===ds&&(!drvFilter||b.driver===drvFilter)});
+  document.getElementById('cal-detail-body').innerHTML=dayBks.length?dayBks.map(bkCardHtml).join(''):'<div class="empty-state" style="padding:1.5rem;font-size:1rem">No bookings on this day</div>';
+  const det=document.getElementById('cal-detail');det.classList.add('open');det.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ══════════════════════════
+// UTILS
+// ══════════════════════════
+function getWeekDates(off){
+  const now=new Date(),day=now.getDay();
+  const mon=new Date(now);mon.setDate(now.getDate()-(day===0?6:day-1)+off*7);
+  return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d});
+}
+function isToday(dt){const t=new Date();return dt.getDate()===t.getDate()&&dt.getMonth()===t.getMonth()&&dt.getFullYear()===t.getFullYear()}
+
+// ══════════════════════════
+// PHOTOS PANEL
+// ══════════════════════════
+const DEFAULT_IMAGES={
+  hero:'img3.jpg',
+  discoverHero:'img5.jpg',
+  agadir:[
+    {url:'img1.jpg',label:'Agadir · Hotel & Kasbah Hill'},
+    {url:'img2.jpg',label:'Agadir at Night · Kasbah View'},
+    {url:'img4.jpg',label:'Agadir Corniche · Kasbah at Dusk'},
+    {url:'img8.jpg',label:'Agadir Kasbah · Camels at Night'},
+    {url:'img3.jpg',label:'Agadir Corniche · Palm Promenade'},
+  ],
+  taghazout:[
+    {url:'img5.jpg',label:'Taghazout · Sunset from the Rocks'},
+    {url:'img9.jpg',label:'Taghazout · Fishing Village'},
+    {url:'img10.jpg',label:'Taghazout · Skate Park & Ocean'},
+    {url:'img6.jpg',label:'Paradise Valley · Canyon'},
+    {url:'img7.jpg',label:'Paradise Valley · Oasis'},
+  ],
+};
+function loadImages(){return SITE_IMAGES||JSON.parse(JSON.stringify(DEFAULT_IMAGES))}
+
+let GALLERY_STATE={agadir:[],taghazout:[]};
+
+function renderPhotosPanel(){
+  const img=loadImages();
+  document.getElementById('ph-hero').value=img.hero===DEFAULT_IMAGES.hero?'':(img.hero||'');
+  document.getElementById('ph-dischero').value=img.discoverHero===DEFAULT_IMAGES.discoverHero?'':(img.discoverHero||'');
+  setPrev('ph-hero-prev',img.hero);
+  setPrev('ph-dischero-prev',img.discoverHero);
+  document.getElementById('ph-hero').oninput=e=>setPrev('ph-hero-prev',e.target.value||DEFAULT_IMAGES.hero);
+  document.getElementById('ph-dischero').oninput=e=>setPrev('ph-dischero-prev',e.target.value||DEFAULT_IMAGES.discoverHero);
+
+  // seed the editable state from whatever is currently saved (or the defaults, on first run)
+  GALLERY_STATE.agadir=JSON.parse(JSON.stringify((img.agadir&&img.agadir.length)?img.agadir:DEFAULT_IMAGES.agadir));
+  GALLERY_STATE.taghazout=JSON.parse(JSON.stringify((img.taghazout&&img.taghazout.length)?img.taghazout:DEFAULT_IMAGES.taghazout));
+
+  renderGalleryRows('agadir');
+  renderGalleryRows('taghazout');
+}
+function setPrev(id,url){const el=document.getElementById(id);if(el)el.style.backgroundImage=url?`url('${url}')`:'none'}
+
+function renderGalleryRows(key){
+  const c=document.getElementById(`ph-${key}-rows`);if(!c)return;
+  const arr=GALLERY_STATE[key];
+  c.innerHTML=arr.map((item,i)=>`
+    <div class="photo-row">
+      <input type="url" class="photo-input" placeholder="https://…" value="${item.url||''}" oninput="updateGalleryField('${key}',${i},'url',this.value);setPrev('ph-${key}-prev-${i}',this.value)">
+      <input type="text" class="photo-label-input" placeholder="Caption" value="${item.label||''}" oninput="updateGalleryField('${key}',${i},'label',this.value)">
+      <div class="photo-preview" id="ph-${key}-prev-${i}" style="background-image:url('${item.url||''}')"></div>
+      <button type="button" class="btn-remove-photo" title="Remove this photo" onclick="removeGalleryRow('${key}',${i})">✕</button>
+    </div>`).join('');
+}
+function updateGalleryField(key,i,field,value){
+  if(!GALLERY_STATE[key][i])return;
+  GALLERY_STATE[key][i][field]=value;
+}
+function addGalleryRow(key){
+  GALLERY_STATE[key].push({url:'',label:''});
+  renderGalleryRows(key);
+}
+function removeGalleryRow(key,i){
+  GALLERY_STATE[key].splice(i,1);
+  renderGalleryRows(key);
+}
+function collectGallery(key){
+  // drop rows with no URL — an empty row shouldn't be saved as a broken gallery entry
+  return GALLERY_STATE[key].filter(item=>(item.url||'').trim()).map(item=>({
+    url:item.url.trim(),
+    label:(item.label||'').trim()||'Photo',
+  }));
+}
+async function savePhotos(){
+  const data={
+    hero:(document.getElementById('ph-hero').value||'').trim()||DEFAULT_IMAGES.hero,
+    discoverHero:(document.getElementById('ph-dischero').value||'').trim()||DEFAULT_IMAGES.discoverHero,
+    agadir:collectGallery('agadir'),
+    taghazout:collectGallery('taghazout'),
+  };
+  if(!data.agadir.length)data.agadir=JSON.parse(JSON.stringify(DEFAULT_IMAGES.agadir));
+  if(!data.taghazout.length)data.taghazout=JSON.parse(JSON.stringify(DEFAULT_IMAGES.taghazout));
+  try{
+    await apiPost({action:'saveImages',images:data});
+    SITE_IMAGES=data;
+    showToast('Photos saved — live on the public site now.');
+  }catch(e){
+    showToast('⚠ Could not save — check your connection and try again.');
+  }
+}
+async function resetPhotos(){
+  if(!confirm('Reset all photos to the built-in defaults?'))return;
+  const data=JSON.parse(JSON.stringify(DEFAULT_IMAGES));
+  try{
+    await apiPost({action:'saveImages',images:data});
+    SITE_IMAGES=data;
+    renderPhotosPanel();
+    showToast('Photos reset to defaults.');
+  }catch(e){
+    showToast('⚠ Could not reset — check your connection and try again.');
+  }
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+</script>
+</body>
+</html>
